@@ -1,60 +1,55 @@
-/*
- * Copyright 2019 Google LLC. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/* eslint-disable no-undef, @typescript-eslint/no-unused-vars, no-unused-vars */
 import "./style.css";
 
+const queryString = window.location.search
+const urlParams = new URLSearchParams(queryString)
+const route = urlParams.get('route')
+const data = require('../data.json')
+
+
+console.log(find(data,route))
+
+function find(data, route) {
+  for (var i = 0; i < data.length; i++){
+    // look for the entry with a matching `code` value
+    if (data[i].route == route){
+        return data[i]
+    }
+  }
+}
+
+
 function initMap(): void {
-  const directionsService = new google.maps.DirectionsService();
-  const directionsRenderer = new google.maps.DirectionsRenderer();
+  const directionsService = new google.maps.DirectionsService()
+  const directionsRenderer = new google.maps.DirectionsRenderer()
+  const r = find(data,route)
+  const waypoints = r.locations
+  const origin = r.origin
   const map = new google.maps.Map(
     document.getElementById("map") as HTMLElement,
     {
       zoom: 7,
-      center: { lat: 41.85, lng: -87.65 },
+      center: origin
     }
   );
 
   directionsRenderer.setMap(map);
 
-  const onChangeHandler = function () {
-    calculateAndDisplayRoute(directionsService, directionsRenderer);
-  };
-
-  (document.getElementById("start") as HTMLElement).addEventListener(
-    "change",
-    onChangeHandler
-  );
-  (document.getElementById("end") as HTMLElement).addEventListener(
-    "change",
-    onChangeHandler
-  );
+  calculateAndDisplayRoute(directionsService, directionsRenderer,origin,waypoints);
+  
 }
+
 
 function calculateAndDisplayRoute(
   directionsService: google.maps.DirectionsService,
-  directionsRenderer: google.maps.DirectionsRenderer
-) {
+  directionsRenderer: google.maps.DirectionsRenderer,
+  originValue: string,
+  waypointValue: google.maps.DirectionsWaypoint[]
+  ) {
   directionsService
     .route({
-      origin: {
-        query: (document.getElementById("start") as HTMLInputElement).value,
-      },
-      destination: {
-        query: (document.getElementById("end") as HTMLInputElement).value,
-      },
+      origin: originValue,
+      destination: originValue,
+      waypoints: waypointValue,
       travelMode: google.maps.TravelMode.DRIVING,
     })
     .then((response) => {
