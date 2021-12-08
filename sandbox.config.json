@@ -5,7 +5,7 @@
   "template": "node",
   "disableLogging": false,
   "container": {
-    "port": 8080,
+    "port": 80,
     "node": 14
   }
 }

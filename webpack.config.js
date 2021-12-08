@@ -97,5 +97,9 @@ module.exports = (env) => {
       // use cdn version of ThreeJS to avoid tree shaking complexity
       three: "THREE",
     },
+    performance: {
+      hints: false,
+      
+    }
   };
 };
